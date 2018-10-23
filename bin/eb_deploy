@@ -1,0 +1,114 @@
+#!/usr/bin/python
+
+"""
+Deploys a new application version to Elastic Beanstalk in fire-and-forget fashion.
+"""
+
+import argparse
+import time
+import boto3
+
+def create_version(client, application_name, version_label, s3_bucket, s3_key):
+    """Creates a new version of the Elastic Beanstalk application """
+    response = client.create_application_version(
+        ApplicationName=application_name,
+        VersionLabel=version_label,
+        SourceBundle={
+            'S3Bucket': s3_bucket,
+            'S3Key': s3_key
+        },
+        Process=True
+    )
+
+    print response
+
+def wait_until_version_processed(client, application_name, version_label):
+    """Polls for the version processing to finish."""
+    timeout = 3 * 60
+    sleep = 5
+    stop_trying = time.time() + timeout
+
+    while time.time() < stop_trying:
+        response = client.describe_application_versions(
+            ApplicationName=application_name,
+            VersionLabels=[version_label]
+        )
+
+        version = response['ApplicationVersions'][0]
+
+        if version['Status'] == 'PROCESSED':
+            print 'Version processed'
+            return version
+        else:
+            print 'Waiting for new version to be processed'
+            time.sleep(sleep)
+
+    return None
+
+def wait_until_environment_ready(client, application_name, environment_name):
+    """Poll for the environment to be ready to accept deployments."""
+    timeout = 10 * 60
+    sleep = 5
+    stop_trying = time.time() + timeout
+
+    while time.time() < stop_trying:
+        response = client.describe_environments(
+            ApplicationName=application_name,
+            EnvironmentNames=[environment_name]
+        )
+
+        status = response['Environments'][0]['Status']
+
+        if status == 'Ready':
+            print 'Environment is ready'
+            return
+        else:
+            print 'Waiting for the environment to transition to Ready-state'
+            time.sleep(sleep)
+
+def deploy_version(client, application_name, environment_name, version_label):
+    """Deploy the app by updating the environment to the chosen version."""
+    response = client.update_environment(
+        ApplicationName=application_name,
+        EnvironmentName=environment_name,
+        VersionLabel=version_label
+    )
+
+    print response
+
+def main():
+    """Deploy an app from S3 to Elastic Beanstalk."""
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('application', type=str, help='Name of the ElasticBeanstalk application')
+    parser.add_argument('environment', type=str, help='Name the of the ElasticBeanstalk environment')
+    parser.add_argument('version', type=str, help='Version label to use for this deployment')
+    parser.add_argument('s3_bucket', type=str, help='S3 bucket name')
+    parser.add_argument('s3_key', type=str, help='S3 key/path of the deployment package')
+    parser.add_argument('region', type=str, help='AWS region')
+
+    args = parser.parse_args()
+
+    boto3.setup_default_session(region_name=args.region)
+    client = boto3.client('elasticbeanstalk')
+
+    application_name = args.application
+    version_label = args.version
+    s3_bucket = args.s3_bucket
+    s3_key = args.s3_key
+    environment_name = args.environment
+
+    # in case the environment is processing a previous deployment or is not in a Ready-state
+    wait_until_environment_ready(client, application_name, environment_name)
+
+    print "Create version from the S3 bundle"
+    create_version(client, application_name, version_label, s3_bucket, s3_key)
+
+    print "Wait for new version to be processed and verified"
+    wait_until_version_processed(client, application_name, version_label)
+
+    print "Deploy new version"
+    deploy_version(client, application_name, environment_name, version_label)
+
+if __name__ == '__main__':
+    main()
