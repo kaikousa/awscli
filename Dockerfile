@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y \
     python-setuptools \
     python-dev \
     python-pip \
+    zip \
+    unzip \
   && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
