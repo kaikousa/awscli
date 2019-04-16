@@ -12,6 +12,6 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
-RUN pip install awscli s3cmd awsebcli boto3
+RUN pip install awscli s3cmd awsebcli boto3 jinja2
 
 COPY bin/* /usr/bin/
