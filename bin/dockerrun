@@ -1,0 +1,32 @@
+#!/usr/bin/python
+
+"""
+Generates contents for a Dockerrun.aws.json need for deployment.
+"""
+
+import argparse
+from jinja2 import Template
+
+def render(image_uri, template_file):
+    """
+    Renders the provided Jinja2 template and fills in the image uri
+    """
+    with open(template_file) as f:
+        template = f.read()
+        t = Template(template)
+
+        return t.render(image_uri=image_uri)
+
+def main():
+    """
+    Output a JSON document for Dockerrun.aws.json.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("image_uri", type=str, help="Image URI in ECR")
+    parser.add_argument("template_file", type=str, help="Jinja2 template filename")
+    args = parser.parse_args()
+
+    print render(args.image_uri, args.template_file)
+
+if __name__ == '__main__':
+    main()
