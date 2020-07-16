@@ -9,6 +9,8 @@ Installs:
 * `awsebcli`
 * `boto3`
 * `jinja2`
+* `yarn`
+* `serverless`
 
 ## Custom tools
 
