@@ -11,6 +11,7 @@ Installs:
 * `jinja2`
 * `yarn`
 * `serverless`
+* `ecs-deploy`: [github](https://github.com/silinternational/ecs-deploy)
 
 ## Custom tools
 

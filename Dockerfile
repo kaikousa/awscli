@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip
 RUN pip install awscli s3cmd awsebcli boto3 jinja2
 
+RUN curl https://raw.githubusercontent.com/silinternational/ecs-deploy/master/ecs-deploy | tee /usr/bin/ecs-deploy \
+    && chmod +x /usr/bin/ecs-deploy
+
 # add nodejs repository
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get update && apt-get install -y nodejs
