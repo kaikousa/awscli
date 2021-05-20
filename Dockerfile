@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git-core \
     curl \
+    jq \
   && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
