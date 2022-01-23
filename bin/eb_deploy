@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 Deploys a new application version to Elastic Beanstalk in fire-and-forget fashion.
@@ -20,7 +20,7 @@ def create_version(client, application_name, version_label, s3_bucket, s3_key):
         Process=True
     )
 
-    print response
+    print(response)
 
 def wait_until_version_processed(client, application_name, version_label):
     """Polls for the version processing to finish."""
@@ -37,10 +37,10 @@ def wait_until_version_processed(client, application_name, version_label):
         version = response['ApplicationVersions'][0]
 
         if version['Status'] == 'PROCESSED':
-            print 'Version processed'
+            print('Version processed')
             return version
         else:
-            print 'Waiting for new version to be processed'
+            print('Waiting for new version to be processed')
             time.sleep(sleep)
 
     return None
@@ -60,10 +60,10 @@ def wait_until_environment_ready(client, application_name, environment_name):
         status = response['Environments'][0]['Status']
 
         if status == 'Ready':
-            print 'Environment is ready'
+            print('Environment is ready')
             return
         else:
-            print 'Waiting for the environment to transition to Ready-state'
+            print('Waiting for the environment to transition to Ready-state')
             time.sleep(sleep)
 
 def deploy_version(client, application_name, environment_name, version_label):
@@ -74,7 +74,7 @@ def deploy_version(client, application_name, environment_name, version_label):
         VersionLabel=version_label
     )
 
-    print response
+    print(response)
 
 def main():
     """Deploy an app from S3 to Elastic Beanstalk."""
@@ -101,13 +101,13 @@ def main():
     # in case the environment is processing a previous deployment or is not in a Ready-state
     wait_until_environment_ready(client, application_name, environment_name)
 
-    print "Create version from the S3 bundle"
+    print("Create version from the S3 bundle")
     create_version(client, application_name, version_label, s3_bucket, s3_key)
 
-    print "Wait for new version to be processed and verified"
+    print("Wait for new version to be processed and verified")
     wait_until_version_processed(client, application_name, version_label)
 
-    print "Deploy new version"
+    print("Deploy new version")
     deploy_version(client, application_name, environment_name, version_label)
 
 if __name__ == '__main__':

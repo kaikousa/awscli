@@ -4,7 +4,7 @@ MAINTAINER Kai Kousa <kai.kousa@gmail.com>
 RUN apt-get update && apt-get install -y \
     python-setuptools \
     python-dev \
-    python-pip \
+    python3-pip \
     zip \
     unzip \
     git-core \
@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
     jq \
   && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-RUN pip install awscli s3cmd awsebcli boto3 jinja2
+RUN pip3 install --upgrade pip
+RUN pip3 install awscli s3cmd awsebcli boto3 jinja2
 
 RUN curl https://raw.githubusercontent.com/silinternational/ecs-deploy/master/ecs-deploy | tee /usr/bin/ecs-deploy \
     && chmod +x /usr/bin/ecs-deploy

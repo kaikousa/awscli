@@ -1,0 +1,11 @@
+[MASTER]
+
+# String used as indentation unit. This is usually "    " (4 spaces) or "\t" (1 tab).
+indent-string='  '
+
+# Number of spaces of indent required inside a hanging  or continued line.
+indent-after-paren=3
+
+[MESSAGES CONTROL]
+# Ignore Mozilla specific style rule about if-else
+disable=R1705

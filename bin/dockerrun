@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 Generates contents for a Dockerrun.aws.json need for deployment.
@@ -26,7 +26,7 @@ def main():
     parser.add_argument("template_file", type=str, help="Jinja2 template filename")
     args = parser.parse_args()
 
-    print render(args.image_uri, args.template_file)
+    print(render(args.image_uri, args.template_file))
 
 if __name__ == '__main__':
     main()
