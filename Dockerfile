@@ -1,5 +1,4 @@
-FROM ubuntu:18.04
-MAINTAINER Kai Kousa <kai.kousa@gmail.com>
+FROM ubuntu:20.04
 
 RUN apt-get update && apt-get install -y \
     python-setuptools \
@@ -13,13 +12,13 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --upgrade pip
-RUN pip3 install awscli s3cmd awsebcli boto3 jinja2
+RUN pip3 install awscli s3cmd boto3 jinja2
 
 RUN curl https://raw.githubusercontent.com/silinternational/ecs-deploy/master/ecs-deploy | tee /usr/bin/ecs-deploy \
     && chmod +x /usr/bin/ecs-deploy
 
 # add nodejs repository
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN curl -fsL https://deb.nodesource.com/setup_20.x | bash -
 RUN apt-get update && apt-get install -y nodejs
 
 # install yarn to replace npm
